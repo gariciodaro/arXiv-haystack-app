@@ -19,12 +19,19 @@ def create_spark_session():
         .getOrCreate()
     return spark
 
+
 def spark_etl(spark,input_data,output_data):
     df = spark.read.json(input_data)
     df_author=df.selectExpr("id","explode(authors_parsed) as e")
     df_author=df_author.withColumn("author",concat_ws(" ",col("e")))
     df_author=df_author.select("id","author")
     df_author.write.mode("overwrite").parquet(output_data+"authors")
+
+    df_abstracts=df.select("id","abstract")
+    df_abstracts.write.mode("overwrite").parquet(output_data+"abstracts")
+
+    df_categories=df.selectExpr("id","explode(split(categories,' ')) as category")
+    df_categories.write.mode("overwrite").parquet(output_data+"categories")
 
 
 def main():
