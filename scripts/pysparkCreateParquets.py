@@ -1,19 +1,19 @@
-import pandas as pd
+#import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import split, explode
 from pyspark.sql.functions import regexp_extract
 from pyspark.sql.functions import col, concat_ws,lit
 import sys
 import os
-import configparser
+#import configparser
 #script_pos = os.path.dirname(os.path.abspath(__file__))
 
 # Get credendials for AWS.
 config = configparser.ConfigParser()
 #config.read('dl.cfg')
-config.read('/home/gari/.aws/credentials')
-os.environ['AWS_ACCESS_KEY_ID']=config.get('credentials','KEY')
-os.environ['AWS_SECRET_ACCESS_KEY']=config.get('credentials','SECRET')
+#config.read('/home/gari/.aws/credentials')
+#os.environ['AWS_ACCESS_KEY_ID']=config.get('credentials','KEY')
+#os.environ['AWS_SECRET_ACCESS_KEY']=config.get('credentials','SECRET')
 
 
 def create_spark_session():
@@ -86,8 +86,8 @@ def spark_etl(spark,input_data_1,input_data_2,output_data):
 
 def main():
     spark=create_spark_session()
-    input_data_1= "/home/gari/Desktop/final_project/input_data/arxiv-metadata-oai-snapshot.json"
-    input_data_2= "/home/gari/Desktop/final_project/input_data/NIPS.csv"
+    input_data_1= "s3a://arxivs3/input_data/arxiv-metadata-oai-snapshot.json"
+    input_data_2= "s3a://arxivs3/input_data/NIPS.csv"
     output_data="s3a://arxivs3/"
     spark_etl(spark,input_data_1,input_data_2,output_data)
 
