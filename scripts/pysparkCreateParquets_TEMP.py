@@ -45,32 +45,14 @@ def text_prepare(text):
         pass
     return text
 
-
-
 def spark_etl(spark,input_data_1,input_data_2,output_data):
 
     #Main papars db. arXiv.
     df = spark.read.json(input_data_1)
     df.persist()
-
     #NIPS db. Enrichment of orignal arXiv db.
     df_papers_nips = spark.read.format("csv").option("delimiter", 
                 "|").option("header","True").load(input_data_2)
-    
-    #papers fact table
-    df.write.mode("overwrite").parquet(output_data+"papers")
-
-    #dimension tables.
-    # titles tables
-    df_titles=df.select('id','title').union(df_papers_nips.select('id','title'))
-    df_titles.write.mode("overwrite").parquet(output_data+"titles")
-
-    # authors table
-    df_author=df.selectExpr("id","explode(authors_parsed) as e")
-    df_author=df_author.withColumn("author",concat_ws(" ",col("e")))
-    df_author=df_author.select("id","author")
-    df_author.write.mode("overwrite").parquet(output_data+"authors")
-
     # abstracts table
     df_abstracts=df.select("id","abstract").withColumn("origin",lit("arXiv"))
     df_abstract_nips=df_papers_nips.select("id",
@@ -81,33 +63,8 @@ def spark_etl(spark,input_data_1,input_data_2,output_data):
     new_abs=df_en_abstracts.\
         withColumn("abstract", clean_text(df.abstract)).\
             withColumn("abstract", col("abstract").alias("", metadata={"maxlength":2048}))
-    new_abs.write.mode("overwrite").parquet(output_data+"abstracts")
+    new_abs.na.drop().write.mode("overwrite").parquet(output_data+"abstracts")
 
-    # categories table
-    df_categories=df.selectExpr("id","explode(split(categories,' ')) as category")
-    df_categories.write.mode("overwrite").parquet(output_data+"categories")
-
-    # versions table
-    df_versions=df.selectExpr("id","versions","explode(versions) as info_versions")
-    df_versions=df_versions.withColumn(
-                        "created", col("info_versions.created")).\
-                        withColumn("version", col("info_versions.version")).\
-                        selectExpr("id","created","version").\
-                        withColumn("month", 
-                        regexp_extract(col('created'), 
-                        '(,)(\s+)(\w+)(\s+)(\w+)', 5)).\
-                        withColumn("year", regexp_extract(col('created'),
-                        '(,)(\s+)(\w+)(\s+)(\w+)(\s+)(\w+)', 7))
-    df_versions_nips=df_papers_nips.select('id','year').\
-                    withColumn('created',lit('no info')).\
-                    withColumn('version',lit('no info')).\
-                    withColumn('mouth',lit('no info'))
-    df_versions_nips=df_versions_nips.select('id','created',
-                                            'version',
-                                            'mouth',
-                                            'year')
-    df_versions.union(df_versions_nips).write.mode("overwrite").\
-                                        parquet(output_data+"versions")
 
 def main():
     spark=create_spark_session()

@@ -13,14 +13,14 @@ aws_hook = AwsHook("aws_credentials")
 credentials = aws_hook.get_credentials()
 
 copy_sql = ("""
-    COPY {} FROM '{}'
+    COPY {} 
+    FROM '{}'
+    IAM_ROLE 'arn:aws:iam::384278250086:role/dwhRole'
     FORMAT AS PARQUET
-    ACCESS_KEY_ID '{}'
-    SECRET_ACCESS_KEY '{}'
-    region 'us-west-2';
 """)
 
-list_tables=['papers','authors','abstracts','categories','versions','titles']
+#list_tables=['papers','authors','abstracts','categories','versions','titles']
+list_tables=['authors','abstracts','categories','versions','titles']
 
 args = {
     'owner': 'Gari',
@@ -39,10 +39,8 @@ for each_table in list_tables:
     PostgresOperator(
     task_id="loading_table_"+each_table,
     dag=dag,
-    postgres_conn_id="redshift_conn_id",
+    postgres_conn_id="redshift",
     sql=copy_sql.format(each_table,
-                        's3a://arxivs3/input_data/'+each_table,
-                        credentials.access_key, 
-                        credentials.secret_key)
+                        's3://arxivs3/'+each_table+'/')
     )
 
