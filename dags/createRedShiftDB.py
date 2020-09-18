@@ -44,48 +44,47 @@ create_table = PostgresOperator(
     BEGIN;
     DROP TABLE IF EXISTS public.papers; 
     CREATE TABLE public.papers (
-    abstract varchar(256) NOT NULL,
-    authors varchar(256) NOT NULL,
-    authors_parsed varchar(256) NOT NULL,
-    categories varchar(256) NOT NULL,
-    comments varchar(256) NOT NULL,
-    doi varchar(256) NOT NULL,
-    id varchar(20) NOT NULL,
-    journal_ref varchar(256) NOT NULL,
-    license varchar(256) NOT NULL,
-    report_no varchar(256) NOT NULL,
-    submitter varchar(256) NOT NULL,
-    title varchar(256) NOT NULL,
-    update_date varchar(256) NOT NULL,
-    versions varchar(256) NOT NULL,
-    CONSTRAINT papers_pk PRIMARY KEY (id)
+    id          varchar(256) NOT NULL,
+    title       varchar(256) NOT NULL,
+    categories  varchar(256) NULL,
+    doi         varchar(256) NULL,
+    comments    varchar(256) NULL,
+    journalref  varchar(256) NULL,
+    license     varchar(256) NULL,
+    reportno    varchar(256) NULL,
+    submitter   varchar(256) NULL,
+    updatedate  varchar(256) NULL
     ) diststyle even;
     DROP TABLE IF EXISTS public.authors; 
     CREATE TABLE public.authors (
-        id varchar(20) NOT NULL,
+        id_author INT PRIMARY KEY,
+        id varchar(256) NOT NULL,
         author varchar(256) NOT NULL
     ) diststyle all;
     DROP TABLE IF EXISTS public.abstracts;
     CREATE TABLE public.abstracts (
-        id varchar(20) NOT NULL PRIMARY KEY,
-        abstract varchar(256) NOT NULL,
+        id varchar(256) NOT NULL PRIMARY KEY,
+        abstract varchar(2048) NOT NULL,
         origin  varchar(256) NOT NULL
     ) diststyle auto;
     DROP TABLE IF EXISTS public.categories;
     CREATE TABLE public.categories (
-        id varchar(20) NOT NULL,
+        id_category INT PRIMARY KEY,
+        id varchar(256) NOT NULL,
         category varchar(256) NOT NULL
     ) diststyle all;
     DROP TABLE IF EXISTS public.versions;
     CREATE TABLE public.versions (
-        id varchar(20) NOT NULL,
+        id_version INT PRIMARY KEY,
+        id varchar(256) NOT NULL,
+        created varchar(256) NOT NULL,
         version varchar(10) NOT NULL,
         month varchar(10) NOT NULL,
         year INT NOT NULL
     ) diststyle all;
     DROP TABLE IF EXISTS public.titles;
     CREATE TABLE public.titles (
-        id varchar(20) NOT NULL PRIMARY KEY,
+        id varchar(256) NOT NULL PRIMARY KEY,
         title varchar(256) NOT NULL
     ) diststyle all;
     COMMIT;

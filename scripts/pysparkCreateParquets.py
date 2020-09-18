@@ -3,6 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import split, explode
 from pyspark.sql.functions import regexp_extract
 from pyspark.sql.functions import col, concat_ws,lit
+from pyspark.sql.functions import monotonically_increasing_id
 from pyspark.sql.functions import udf
 import sys
 import os
@@ -45,6 +46,13 @@ def text_prepare(text):
         pass
     return text
 
+clean_text = udf(lambda x: text_prepare(x))
+
+def fix_col_var(df,name_col):
+    df_new=df.withColumn(name_col, clean_text(col(name_col))).\
+        withColumn(name_col, 
+                col(name_col).alias("", metadata={"maxlength":2048}))
+    return df_new
 
 
 def spark_etl(spark,input_data_1,input_data_2,output_data):
@@ -57,34 +65,52 @@ def spark_etl(spark,input_data_1,input_data_2,output_data):
     df_papers_nips = spark.read.format("csv").option("delimiter", 
                 "|").option("header","True").load(input_data_2)
     
+    df=fix_col_var(df,"id")
+    df=fix_col_var(df,"title")
+    df=fix_col_var(df,"comments")
+    df=fix_col_var(df,"abstract")
+
+    df_papers_nips=fix_col_var(df_papers_nips,"abstract")
+    df_papers_nips=fix_col_var(df_papers_nips,"id")
+    df_papers_nips=fix_col_var(df_papers_nips,"title")
     #papers fact table
-    df.write.mode("overwrite").parquet(output_data+"papers")
+    df.select("id",
+          "title",
+          "authors",
+          "categories",
+          "doi",
+          "comments",
+          "journal-ref",
+          "license",
+          "report-no",
+          "submitter",
+          "update_date").write.mode("overwrite").parquet(output_data+"papers")
 
     #dimension tables.
     # titles tables
     df_titles=df.select('id','title').union(df_papers_nips.select('id','title'))
+    df_titles=df_titles.na.drop()
     df_titles.write.mode("overwrite").parquet(output_data+"titles")
 
     # authors table
     df_author=df.selectExpr("id","explode(authors_parsed) as e")
     df_author=df_author.withColumn("author",concat_ws(" ",col("e")))
-    df_author=df_author.select("id","author")
+    df_author=df_author.withColumn("id_author",monotonically_increasing_id()).select("id_author","id","author")
     df_author.write.mode("overwrite").parquet(output_data+"authors")
 
     # abstracts table
     df_abstracts=df.select("id","abstract").withColumn("origin",lit("arXiv"))
     df_abstract_nips=df_papers_nips.select("id",
                                 "abstract").withColumn("origin",lit("NIPS"))
-    df_en_abstracts=df_abstracts.union(df_abstract_nips)
-    clean_text = udf(lambda x: text_prepare(x))
 
-    new_abs=df_en_abstracts.\
-        withColumn("abstract", clean_text(df.abstract)).\
-            withColumn("abstract", col("abstract").alias("", metadata={"maxlength":2048}))
-    new_abs.write.mode("overwrite").parquet(output_data+"abstracts")
+    df_en_abstracts=df_abstracts.union(df_abstract_nips)
+    df_en_abstracts.na.drop().write.mode("overwrite").parquet(output_data+"abstracts")
 
     # categories table
     df_categories=df.selectExpr("id","explode(split(categories,' ')) as category")
+    df_categories=df_categories.\
+        withColumn("id_category",monotonically_increasing_id()).\
+            select("id_category","id","author")
     df_categories.write.mode("overwrite").parquet(output_data+"categories")
 
     # versions table
@@ -101,13 +127,15 @@ def spark_etl(spark,input_data_1,input_data_2,output_data):
     df_versions_nips=df_papers_nips.select('id','year').\
                     withColumn('created',lit('no info')).\
                     withColumn('version',lit('no info')).\
-                    withColumn('mouth',lit('no info'))
+                    withColumn('month',lit('no info'))
     df_versions_nips=df_versions_nips.select('id','created',
                                             'version',
-                                            'mouth',
+                                            'month',
                                             'year')
-    df_versions.union(df_versions_nips).write.mode("overwrite").\
-                                        parquet(output_data+"versions")
+    df_versions.union(df_versions_nips).na.drop().\
+        withColumn("id_version",monotonically_increasing_id()).\
+        select("id_version","id","created","version","month","year").\
+        write.mode("overwrite").parquet(output_data+"versions")
 
 def main():
     spark=create_spark_session()

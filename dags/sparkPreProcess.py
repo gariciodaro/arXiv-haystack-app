@@ -46,7 +46,7 @@ copy_spark_task = SFTPOperator(
 execute_spark_task = SSHOperator(
     ssh_hook=ssh_hook,
     task_id='execute_spark_task',
-    command='/usr/bin/spark-submit --master yarn ./pysparkCreateParquets_TEMP.py',
+    command='/usr/bin/spark-submit --master yarn ./pysparkCreateParquets.py',
     dag=dag
     )
 
