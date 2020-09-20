@@ -1,0 +1,18 @@
+pip install "apache-airflow[s3, postgres]"
+
+modify dag folder to point to you project.
+cd ~/airflow
+
+# run airflow
+airflow webserver
+airflow scheduler
+
+# bug detected :
+pip install -U Werkzeug==0.16.0
+
+
+python 3.5
+pip install pyspark 
+conda install pandas 
+pip install paramiko
+pip install sshtunnel

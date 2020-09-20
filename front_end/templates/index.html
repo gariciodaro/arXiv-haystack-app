@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block main %}
+ <h4><span class="fa fa-dragon"></span> <i>Large scale Q and A on arXiv Kaggle dataset.</i> </h4>
+ <p> This a simple front end to play with Arxiv data of
+      <a href="https://www.kaggle.com/Cornell-University/arxiv">Kaggle.</a>
+    I also enriched this dataset with papers of the
+    <a href="https://www.kaggle.com/benhamner/nips-papers">Neural 
+        Information Processing System</a>.
+</p>
+<form  action="{{ url_for('index') }}" method="post">
+    {{ form.csrf_token }}
+    <div class="form-group row">
+        <label for="query" class="offset-md-1 col-2">
+            Query (Redshift)
+        </label>
+        <div class="col-7">
+            {{ form.query(class="form-control") }}
+        </div>  
+    </div>
+    <div class="form-group row">
+        <div class="offset-md-3 col-9">
+            {{ form.submit(class="btn btn-primary") }}
+        </div>
+        
+    </div>
+</form>
+<div>
+    
+    {% if result %}
+    <h3>Results:</h3>
+        {{result}}
+    {% endif %}
+</div>
+{% endblock %}

@@ -29,15 +29,15 @@ dag = DAG(
 upload_spark_task = BashOperator(
     task_id='upload_spark_script',
     dag=dag,
-    bash_command='scp -i ~/.aws/keypairspark.pem /home/gari/Desktop/final_project/scripts/pysparkCreateParquets_TEMP.py hadoop@ec2-52-33-207-156.us-west-2.compute.amazonaws.com:/home/hadoop/'
+    bash_command='scp -i ~/.aws/keypairspark.pem /home/gari/Desktop/final_project/scripts/pysparkCreateParquets_TEMP.py hadoop@ec2-34-223-107-135.us-west-2.compute.amazonaws.com:/home/hadoop/'
     )
 """
 
 copy_spark_task = SFTPOperator(
     task_id="spark_job_to_emr",
     ssh_hook=ssh_hook,
-    local_filepath="/home/gari/Desktop/final_project/scripts/pysparkCreateParquets.py",
-    remote_filepath="/home/hadoop/pysparkCreateParquets.py",
+    local_filepath="/home/gari/Desktop/final_project/back_end/scripts/pysparkCreateParquets_TEMP.py",
+    remote_filepath="/home/hadoop/pysparkCreateParquets_TEMP.py",
     operation="put",
     create_intermediate_dirs=True,
     dag=dag
@@ -46,7 +46,7 @@ copy_spark_task = SFTPOperator(
 execute_spark_task = SSHOperator(
     ssh_hook=ssh_hook,
     task_id='execute_spark_task',
-    command='/usr/bin/spark-submit --master yarn ./pysparkCreateParquets.py',
+    command='/usr/bin/spark-submit --master yarn ./pysparkCreateParquets_TEMP.py',
     dag=dag
     )
 

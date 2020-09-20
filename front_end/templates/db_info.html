@@ -1,46 +1,10 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Sept 13 2020
-@author: gari.ciodaro.guerra
-DAG of AirFlow to create star schema of 
-in Redshift. Run on demand.
-"""
+{% extends "base.html" %}
 
-#DWH_ENDPOINT  dwhcluster.crh9wevfd8it.us-west-2.redshift.amazonaws.com
-#DWH_ROLE_ARN  arn:aws:iam::384278250086:role/dwhRole
+{% block main %}
+<h4> Data model on Redshift.</h4>
 
-import datetime
-from airflow.operators.postgres_operator import PostgresOperator
-from airflow import DAG
-from airflow.utils.dates import days_ago
-from airflow.contrib.hooks.aws_hook import AwsHook
-
-#get AWS credentials from AirFlow webserver
-aws_hook = AwsHook("aws_credentials")
-credentials = aws_hook.get_credentials()
-
-args = {
-    'owner': 'Gari',
-    'start_date': days_ago(2),
-    'catchup': False,
-    'depends_on_past':False
-}
-
-
-#Default configuration for DAG
-#prevent parallelized process with max_active_runs
-dag = DAG('create_tables_redshift',
-          default_args=args,
-          description='create tables on redshift',
-          max_active_runs=1,
-          schedule_interval=None
-        )
-# set of queries for start schema.
-create_table = PostgresOperator(
-    task_id="create_tables",
-    postgres_conn_id="redshift",
-    dag=dag,
-    sql=("""
+<pre>
+<code class="sql">
     BEGIN;
     DROP TABLE IF EXISTS public.papers; 
     CREATE TABLE public.papers (
@@ -57,7 +21,6 @@ create_table = PostgresOperator(
     ) diststyle even;
     DROP TABLE IF EXISTS public.authors; 
     CREATE TABLE public.authors (
-        id_author INT PRIMARY KEY,
         id varchar(256) NOT NULL,
         author varchar(256) NOT NULL
     ) diststyle all;
@@ -69,18 +32,16 @@ create_table = PostgresOperator(
     ) diststyle auto;
     DROP TABLE IF EXISTS public.categories;
     CREATE TABLE public.categories (
-        id_category INT PRIMARY KEY,
         id varchar(256) NOT NULL,
         category varchar(256) NOT NULL
     ) diststyle all;
     DROP TABLE IF EXISTS public.versions;
     CREATE TABLE public.versions (
-        id_version INT PRIMARY KEY,
         id varchar(256) NOT NULL,
         created varchar(256) NOT NULL,
         version varchar(10) NOT NULL,
         month varchar(10) NOT NULL,
-        year INT NOT NULL
+        year varchar(10) NOT NULL
     ) diststyle all;
     DROP TABLE IF EXISTS public.titles;
     CREATE TABLE public.titles (
@@ -88,5 +49,7 @@ create_table = PostgresOperator(
         title varchar(256) NOT NULL
     ) diststyle all;
     COMMIT;
-    """),
-)
+</code>
+</pre>
+
+{% endblock %}

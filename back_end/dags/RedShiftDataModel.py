@@ -19,8 +19,8 @@ copy_sql = ("""
     FORMAT AS PARQUET
 """)
 
-#list_tables=['papers','authors','abstracts','categories','versions','titles']
-list_tables=['authors','abstracts','categories','versions','titles']
+list_tables=['papers','authors','abstracts','categories','versions','titles']
+#list_tables=['authors','abstracts','categories','versions','titles']
 
 args = {
     'owner': 'Gari',
