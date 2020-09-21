@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block main %}
+
+<div class="row">
+    <div class="col-12 col-sm-6">
+        <div class="card">
+            <h3 class="card-header bg-primary text-white"><span class="fa fa-question-circle"></span> Papers over years?</h3>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-6">Question</dt>
+                    <dd class="col-6">Is there a tendency on the paper production per year?</dd>
+                    <dt class="col-6">R. as 2020 Sept.</dt>
+                    <dd class="col-6">Exponencial tendency</dd>
+                    <dt class="col-2">Query.</dt>
+                    <dd class="col-10">select year,count (distinct id) from versions group by year</dd>
+                </dl>
+                <hr>
+                <center>
+                    <form  action="/eda" method="post">
+                        <input type="hidden" name="form1" value="over_years" />
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary" >Plot</button>
+                            </div>
+                        </div>
+                    </form>
+                </center>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-12 col-sm-6">
+        <div class="card">
+            <h3 class="card-header bg-primary text-white"><span class="fa fa-question-circle"></span> Popular Macro-Taxonomy</h3>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-6">Question</dt>
+                    <dd class="col-6">Is there any predominan topic on Arxiv?</dd>
+                    <dt class="col-6">R. as 2020 Sept.</dt>
+                    <dd class="col-6">Computer science, Math, and Physics.</dd>
+                    <dt class="col-2">Query.</dt>
+                    <dd class="col-10" style="height:50px; overflow-y:scroll;">
+                        select year,category, count(a.id) as count_id from 
+                        (select id, category from categories) a 
+                        left join 
+                        (select id, max(year) as year from versions group by id) b
+                        on a.id=b.id
+                        where year>2000
+                        group by year,category</dd>
+                </dl>
+                <hr>
+                <center>
+                    <form  action="/eda" method="post">
+                        <input type="hidden" name="form1" value="predominan" />
+                        <div class="form-group row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary" >Plot</button>
+                            </div>
+                        </div>
+                    </form>
+                </center>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+{% if im1 %}
+    <img src='/static/paper_prod.png' alt="Chart" width="100%">
+{% endif %}
+{% if im2 %}
+    <img src='/static/paper_topics.png' alt="Chart" width="100%">
+{% endif %}
+
+{% endblock %}
