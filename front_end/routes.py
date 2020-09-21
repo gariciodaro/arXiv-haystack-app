@@ -36,7 +36,7 @@ def index():
     if form.validate_on_submit():
         conn = psycopg2.connect(
             dbname=DWH_DB, 
-            host='dwhcluster.crh9wevfd8it.us-west-2.redshift.amazonaws.com', 
+            host='', 
             port= DWH_PORT,
             user= DWH_DB_USER, 
             password= DWH_DB_PASSWORD)
@@ -71,7 +71,7 @@ def eda():
     if request.method == 'POST':
         conn = psycopg2.connect(
             dbname=DWH_DB, 
-            host='dwhcluster.crh9wevfd8it.us-west-2.redshift.amazonaws.com', 
+            host='', 
             port= DWH_PORT,
             user= DWH_DB_USER, 
             password= DWH_DB_PASSWORD)
