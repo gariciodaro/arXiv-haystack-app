@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block main %}
+{% if not prediction %}
+<div class="alert alert-danger">
+    If you are here, you already have indexed some document to the local 
+    elastic cluster and you are ready to start
+    asking questions about your documents.
+  </div>
+  {% endif %}
+<h2 style="text-align: center;"><span class="fa fa-hat-wizard"></span>Q&A.</h2>
+<form  action="/qanda" method="post">
+    <div class="form-group row">
+        <label for="query" class="offset-md-1 col-2">
+            Query (haystack)
+        </label>
+        <div class="col-7">
+            <input type="text" 
+            class="form-control" 
+            id="query" name="query" placeholder="Questions!">
+        </div>  
+    </div>
+    <div class="form-group row">
+        <div class="col-12" style="text-align: center;">
+            <button type="submit" class="btn btn-primary" >Execute</button>
+        </div>
+    </div>
+</form>
+
+{% if prediction %}
+    <hr>
+    <div class="row">
+    {% for answer in prediction %}
+            <div class="col-12 col-sm-6">
+                <div class="card">
+                    <h3 class="card-header bg-primary text-white">
+                        <span class="fa fa-calculator"></span>
+                         Probability: {{ answer['probability']|round(2) }}</h3>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-2"> Answer </dt>
+                            <dd class="col-10">{{ answer['answer'] }}</dd>
+                            <dt class="col-2">Context</dt>
+                            <dd class="col-10">{{ answer['context'] }}</dd>
+                            <dt class="col-2">Title.</dt>
+                            <dd class="col-10">{{ answer['meta']['name'].split("|")[0] }}</dd>
+                        </dl>
+                        <hr>
+                        <a href="https://arxiv.org/pdf/{{ answer['meta']['name'].split('|')[1].replace(' ','.') }}.pdf">https://arxiv.org/pdf/{{ answer['meta']['name'].split('|')[1].replace(' ','.') }}.pdf</a> 
+                    </div>
+                </div>
+            </div>
+    {% endfor %}
+    </div>
+{% endif %}
+{% endblock %}

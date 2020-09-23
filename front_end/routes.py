@@ -157,9 +157,7 @@ def eda():
             ax2=fig.add_subplot(2,2,2)
             ax3=fig.add_subplot(2,2,3)
             ax4=fig.add_subplot(2,2,4)
-
             fig.suptitle("Frequency of paper by macro-category", fontsize=14)
-
             for year,ax in zip([2005,2010,2015,2020],[ax1,ax2,ax3,ax4]):
                 df_temp=macro_cat.loc[macro_cat.index==year]
                 #print(len(df_temp))
@@ -168,16 +166,10 @@ def eda():
             plt.savefig('./static/paper_topics.png')
             cur.close()
             return render_template('eda.html',im2=True)
-
     return render_template('eda.html')
-
-
 
 @app.route('/qanda_pre' , methods=['GET','POST'])
 def qanda_pre():
-    list_of_pdf=os.listdir('./static/temp_pdf_storage')
-    if len(list_of_pdf)==0:
-        list_of_pdf=None
     if request.method == 'POST':
         conn = psycopg2.connect(
             dbname=DWH_DB, 
@@ -190,87 +182,44 @@ def qanda_pre():
                 cur.execute(request.form.get('query'))
                 results = cur.fetchall()
                 try:
-                    print(results)
                     if len(results[0])==1:
-                        df = pd.DataFrame(results).rename(columns={0:'id'})
-                        value = Markup(df.to_html(header="true", table_id="table"))
-                        cur.close()
                         old=""
                         for each in results:
-                            new=each[0].replace(" ",".")
-                            old=old+","+new
-                        return render_template('qanda_pre.html',result=value,hold=old,list_of_pdf=list_of_pdf)
+                            new=each[0]
+                            if old=="":
+                                old="'"+new+"'"
+                            else:
+                                old=old+","+"'"+new+"'"
+                        cur.execute("""
+                            select a.title, b.abstract, a.id from
+                             (select id,title from titles where id in ({}) ) a 
+                             left join  
+                             (select id,abstract from abstracts) b
+                             on a.id=b.id  """.format(old))
+                        results = cur.fetchall()
+                        for result in results:
+                            load_dict={}
+                            load_dict['name']=result[0]+'|'+result[2]
+                            load_dict['text']=result[1]
+                            print(load_dict['name'])
+                            document_store.write_documents([load_dict])
+                        flash('Abstracts were indexed!')
                     else:
                         flash('Not a good query')
-                        cur.close()
-                        return render_template('qanda_pre.html',list_of_pdf=list_of_pdf)
+                    cur.close()
+                    return render_template('qanda_pre.html')
                 except:
                     flash('Not a good query')
                     cur.close()
-                    return render_template('qanda_pre.html',list_of_pdf=list_of_pdf)
-        if request.form.get('form2')=='process':
-            ids=request.form.get('content2').split(",")
-            for each_id in range(1,len(ids)):
-                #raw = parser.from_file('https://arxiv.org/pdf/{}.pdf'.format(ids[each_id]))
-                #pretared_text=text_prepare(raw['content'])
-                #load_dict={}
-                #load_dict['name']=each_id
-                #load_dict['text']=pretared_text
-                #document_store.write_documents([load_dict])
-                #s3 = boto3.client('s3', aws_access_key_id=SECRET,aws_secret_access_key=KEY)
-                #s3.upload_file(local_file, bucket, s3_file)
-                url = ('https://arxiv.org/pdf/{}.pdf'.format(ids[each_id]))
-                try:
-                    wget.download(url,'./static/temp_pdf_storage/{}.pdf'.format(ids[each_id]))
-                    flash('paper {}.pdf storaged on client static folder'.format(ids[each_id]))
-                except:
-                    flash('paper {}.pdf could not be downloaded '.format(ids[each_id]))
-                    pass
-            flash('papers local download finished.')
-            list_of_pdf=os.listdir('./static/temp_pdf_storage')
-            return render_template('qanda_pre.html',list_of_pdf=list_of_pdf)
-        if request.form.get('form2')=='index_to_elastic':
-            print('*************************starting process')
-            s3 = boto3.client('s3',aws_access_key_id=KEY, 
-                                aws_secret_access_key=SECRET)
-            textract_cli = boto3.client('textract',region_name='us-west-2',
-                            aws_access_key_id=KEY,
-                            aws_secret_access_key=SECRET)
-            for each_pdf in list_of_pdf:
-                file_to_upload='./static/temp_pdf_storage/'+each_pdf
-                s3.upload_file(file_to_upload, S3_BUCKED, 'papers_pdf/'+each_pdf)
-                print('*************************file_to_upload of '+file_to_upload)
-    
-            for each_pdf in list_of_pdf:
-                    print('*************************each_pdf of '+each_pdf)
-                    response = textract_cli.detect_document_text(
-                        Document={
-                            'S3Object': {
-                                'Bucket': S3_BUCKED,
-                                'Name': 'papers_pdf/'+each_pdf
-                            }
-                        })
-                    text = ""
-                    for item in response["Blocks"]:
-                        if item["BlockType"] == "LINE":
-                            text += item["Text"]
-                    print('*************************each_pdf of query'+each_pdf)
-                    cur.execute("select title from titles where id='{}'".format(each_pdf.replace(".pdf","").replace("."," ")))
-                    results = cur.fetchone()
-                    load_dict={}
-                    load_dict['name']=results[0]
-                    load_dict['text']=text
-                    print('************************writing to elastic '+each_pdf)
-                    document_store.write_documents([load_dict])
-
-
+                    return render_template('qanda_pre.html')
     else:
-        return render_template('qanda_pre.html',list_of_pdf=list_of_pdf)
+        return render_template('qanda_pre.html')
 
 @app.route('/qanda' , methods=['GET','POST'])
 def qanda():
     if request.method == 'POST':
         prediction = finder.get_answers(question=request.form.get('query'), top_k_retriever=10, top_k_reader=5)
-        return render_template('qanda.html',prediction=prediction)
+        #df=pd.DataFrame(prediction['answers'])[['answer','context','meta']]
+        return render_template('qanda.html',prediction=prediction['answers'])
     else:
         return render_template('qanda.html')
