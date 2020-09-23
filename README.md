@@ -4,9 +4,9 @@
 This is the final project of my nanodegree on udacity called Data engineering.
 For the back-end, Airflow is used for etl orchestration, this includes: 
 processing the original .json file of arXiv(stored on S3) on an pypspark cluster (EMR on AWS), saving the star
-data model on parquet files again S3 and then copy those files into redshift. Redshift serves an Flask application
+data model on parquet files again in S3 and then copy those files into redshift. Redshift serves a Flask application
 where the user can explore the data sets using queries. 
-with [haystack](https://github.com/deepset-ai/haystack) on top to index, read, and answers question of
+With [haystack](https://github.com/deepset-ai/haystack) + local elasticsearch server on top to index, read, and answers question of
 specific paper of arXiv.
 
 Some of the tables are enriched with papers of the [Neural Information Processing System](https://www.kaggle.com/benhamner/nips-papers). The main
