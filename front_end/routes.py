@@ -219,7 +219,6 @@ def qanda_pre():
 def qanda():
     if request.method == 'POST':
         prediction = finder.get_answers(question=request.form.get('query'), top_k_retriever=10, top_k_reader=5)
-        #df=pd.DataFrame(prediction['answers'])[['answer','context','meta']]
         return render_template('qanda.html',prediction=prediction['answers'])
     else:
         return render_template('qanda.html')
