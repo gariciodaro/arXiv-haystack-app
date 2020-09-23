@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+
+{% block main %}
+
+<h2 style="text-align: center;"><span class="fa fa-lightbulb"></span>Q&A.</h2>
+<p>Please wirte a query that only returns the ID of the papers. 
+    The engine will index this files to the elasticsearch service to that you can
+    ask questions on them.
+</p>
+<form  action="/qanda_pre" method="post">
+        <input type="hidden" name="form2" value="index_docs" />
+        <div class="form-group row">
+            <label for="query" class="offset-md-1 col-2">
+                Query (Redshift)
+            </label>
+            <div class="col-7">
+                <input type="text" 
+                class="form-control" 
+                id="query" name="query" placeholder="query">
+            </div>  
+        </div>
+        <div class="form-group row">
+            <div class="col-12" style="text-align: center;">
+                <button type="submit" class="btn btn-primary" >Execute</button>
+            </div>
+        </div>
+</form>
+
+<div>
+    {% if result %}
+    <h3>Results:</h3>
+        {{result}}
+    
+        <div class="card" style="margin: 50px;">
+            <h3 class="card-header bg-primary text-white"><span class="fa fa-question-circle"></span> Notice</h3>
+            <div class="card-body">
+                <dl class="row">
+                    <p> Would like to submit this documents to the elasticsearch local cluster?. This involves:</p>
+                    <ol>
+                        <li>Get the full paper PDF from https://arxiv.org/pdf/id</li>
+                        <li>parse the pdf with Tika reader. From pdf to Text</li>
+                        <li>Push id and text content to the elasticsearch cluster</li>
+                        <li>Load distilbert-base-uncased-distilled-squad question and 
+                            answers deep learning model. This is run without gpu, much slower but far more stable</li>
+                    </ol>
+                </dl>
+                <hr>
+                <form  action="/qanda_pre" method="post">
+                    <input type="hidden" name="form2" value="process" />
+                    <input type="hidden" name="content2" value="{{hold}}" />
+                    <div class="form-group row">
+                        <div class="col-12" style="text-align: center;">
+                            <button type="submit" class="btn btn-primary" >Load</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+    {% if hold_ext %}
+        {{hold_ext}}
+    {% endif %}
+</div>
+
+<div>
+    {% if list_of_pdf %}
+        <p>The followig pdfs are ready for text extraction on textract AWS and posterior elestic search indexing</p>
+        <ul>
+        {% for pdf in list_of_pdf %}
+            <li>{{ pdf }}</li> 
+        {% endfor %}
+        </ul>
+
+        <form  action="/qanda_pre" method="post">
+            <input type="hidden" name="form2" value="index_to_elastic" />
+            <div class="form-group row">
+                <div class="col-12" style="text-align: center;">
+                    <button type="submit" class="btn btn-primary">Start process</button>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}
