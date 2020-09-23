@@ -21,3 +21,4 @@ pip install git+https://github.com/deepset-ai/haystack.git
 # on Dockerfile
 sudo docker build -t elastic .
 sudo docker run -d -p 9200:9200 -e "discovery.type=single-node" elastic
+http://localhost:9200/document/_search?pretty

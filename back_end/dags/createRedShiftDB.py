@@ -2,12 +2,9 @@
 """
 Created on Sat Sept 13 2020
 @author: gari.ciodaro.guerra
-DAG of AirFlow to create star schema of 
-in Redshift. Run on demand.
+DAG of AirFlow tables schemas for arxivs database. 
+Run on demand.
 """
-
-#DWH_ENDPOINT  dwhcluster.crh9wevfd8it.us-west-2.redshift.amazonaws.com
-#DWH_ROLE_ARN  arn:aws:iam::384278250086:role/dwhRole
 
 import datetime
 from airflow.operators.postgres_operator import PostgresOperator
@@ -25,7 +22,6 @@ args = {
     'catchup': False,
     'depends_on_past':False
 }
-
 
 #Default configuration for DAG
 #prevent parallelized process with max_active_runs

@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sept 5 2020
+@author: gari.ciodaro.guerra
+Auxliar script to cleate a redshift cluster
+"""
+
 import argparse
 import boto3
 import configparser
@@ -8,6 +15,8 @@ config = configparser.ConfigParser()
 config.read('/home/gari/.aws/credentials')
 KEY      = config.get('credentials','KEY')
 SECRET   = config.get('credentials','SECRET')
+REGION   = config.get('credentials','REGION')
+
 
 DWH_CLUSTER_TYPE       = config.get("DWH","DWH_CLUSTER_TYPE")
 DWH_NUM_NODES          = config.get("DWH","DWH_NUM_NODES")
@@ -22,13 +31,13 @@ DWH_IAM_ROLE_NAME      = config.get("DWH", "DWH_IAM_ROLE_NAME")
 #initilizied iam client
 # other region us-east-2
 iam = boto3.client('iam',
-                    region_name='us-west-2',
+                    region_name=REGION,
                     aws_access_key_id=KEY,
                     aws_secret_access_key=SECRET)
 
 #initilizied redshift client
 redshift = boto3.client('redshift',
-                        region_name='us-west-2',
+                        region_name=REGION,
                         aws_access_key_id=KEY,
                         aws_secret_access_key=SECRET)
 

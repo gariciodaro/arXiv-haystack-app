@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Created on Sat Sept 13 2020
+@author: gari.ciodaro.guerra
+DAG of AirFlow to upload from local machine
+scripts/pysparkCreateParquets_TEMP.py, to execute it on a
+EMR pyspark cluster..
+"""
 
 import datetime
 import logging
@@ -10,6 +17,11 @@ from airflow.utils.dates import days_ago
 from airflow.contrib.operators.ssh_operator import SSHOperator
 from  airflow.contrib.hooks.ssh_hook import SSHHook
 from airflow.contrib.operators.sftp_operator import SFTPOperator
+import configparser
+
+config = configparser.ConfigParser()
+#local path the folder scripts
+PATH_SCRIPS = config.get("APP","PATH_SCRIPS")
 
 ssh_hook = SSHHook(ssh_conn_id="ssh_emr")
 
@@ -25,18 +37,11 @@ dag = DAG(
         default_args=args,
         schedule_interval=None
         )
-"""
-upload_spark_task = BashOperator(
-    task_id='upload_spark_script',
-    dag=dag,
-    bash_command='scp -i ~/.aws/keypairspark.pem /home/gari/Desktop/final_project/scripts/pysparkCreateParquets_TEMP.py hadoop@ec2-34-223-107-135.us-west-2.compute.amazonaws.com:/home/hadoop/'
-    )
-"""
 
 copy_spark_task = SFTPOperator(
     task_id="spark_job_to_emr",
     ssh_hook=ssh_hook,
-    local_filepath="/home/gari/Desktop/final_project/back_end/scripts/pysparkCreateParquets_TEMP.py",
+    local_filepath=PATH_SCRIPS+"scripts/pysparkCreateParquets_TEMP.py",
     remote_filepath="/home/hadoop/pysparkCreateParquets_TEMP.py",
     operation="put",
     create_intermediate_dirs=True,

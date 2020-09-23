@@ -15,9 +15,10 @@ config = configparser.ConfigParser()
 config.read('/home/gari/.aws/credentials')
 KEY      = config.get('credentials','KEY')
 SECRET   = config.get('credentials','SECRET')
+REGION   = config.get('credentials','REGION')
 
 def main():
-    connection = boto3.client('emr',region_name='us-west-2',
+    connection = boto3.client('emr',region_name=REGION,
                             aws_access_key_id=KEY,
                             aws_secret_access_key=SECRET)
 
