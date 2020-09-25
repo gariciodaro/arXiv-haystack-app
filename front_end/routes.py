@@ -8,7 +8,6 @@ import psycopg2
 from flask import Markup
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from tika import parser 
 from haystack.document_store.elasticsearch import ElasticsearchDocumentStore
 import boto3
 import os
@@ -16,7 +15,6 @@ from haystack import Finder
 from haystack.reader.farm import FARMReader
 from haystack.reader.transformers import TransformersReader
 from haystack.utils import print_answers
-import wget
 
 document_store = ElasticsearchDocumentStore(host="localhost", 
                                             username="", 

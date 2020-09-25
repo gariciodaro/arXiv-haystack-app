@@ -10,11 +10,6 @@ import datetime
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow import DAG
 from airflow.utils.dates import days_ago
-from airflow.contrib.hooks.aws_hook import AwsHook
-
-#get AWS credentials from AirFlow webserver
-aws_hook = AwsHook("aws_credentials")
-credentials = aws_hook.get_credentials()
 
 args = {
     'owner': 'Gari',

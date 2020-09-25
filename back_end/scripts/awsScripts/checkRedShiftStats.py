@@ -7,15 +7,19 @@ Auxliar script to check redshift status
 
 import boto3
 import configparser
+from airflow.models import Variable
+from airflow.hooks.base_hook import BaseHook
+from airflow.contrib.hooks.aws_hook import AwsHook
 
-config = configparser.ConfigParser()
+aws_hook = AwsHook("aws_credentials")
+credentials = aws_hook.get_credentials()
+# get reshift cluster id
+connection = BaseHook.get_connection("redshift")
 
-# AWS credentials
-config.read('/home/gari/.aws/credentials')
-KEY      = config.get('credentials','KEY')
-SECRET   = config.get('credentials','SECRET')
-REGION   = config.get('credentials','REGION')
-DWH_CLUSTER_IDENTIFIER = config.get("DWH","DWH_CLUSTER_IDENTIFIER")
+KEY      = credentials.access_key
+SECRET   = credentials.secret_key
+REGION   = BaseHook.get_connection("aws_credentials").extra_dejson['region']
+DWH_CLUSTER_IDENTIFIER = connection.host.split(".")[0]
 
 #initilizied redshift client
 # other region us-east-2

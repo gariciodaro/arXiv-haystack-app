@@ -1,0 +1,10 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{My vision}{section.1}% 2
+\BOOKMARK [1][-]{section.2}{Gathering of Data}{}% 3
+\BOOKMARK [2][-]{subsection.2.1}{About ArXiv Dataset}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.2}{About NIPS Dataset}{section.2}% 5
+\BOOKMARK [1][-]{section.3}{Exploration}{}% 6
+\BOOKMARK [2][-]{subsection.3.1}{Raw Volume and Uniqueness of the datasets.}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.2}{Assessment}{section.3}% 8
+\BOOKMARK [1][-]{section.4}{Application Architecture and Workflow.}{}% 9
+\BOOKMARK [1][-]{Appendix.1.A}{Code Repository}{}% 10

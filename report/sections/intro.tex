@@ -1,0 +1,43 @@
+
+
+% ==============================================================================
+% START: Introduction
+% ==============================================================================
+\section{Introduction}
+
+The application is the last requirement to graduate from Udacity's Data Engineering Nano degree. The following is
+the overview of the project as stated on Udacity page course. \\
+
+\emph{The purpose of the data engineering capstone project is to give you a chance to 
+combine what you've learned throughout the program. This project will be an important part of 
+your portfolio that will help you achieve your data engineering-related career goals.}
+
+
+\subsection{My vision}
+The project has two big parts. The backend was designed to run on the cloud. From storage on S3, both the raw files and the parquet model
+to EMR processing and Relational database on Redshift. This would allow various applications to be served by this back-end. The other part would be
+the front end, on local/client side, this means that local user is expected to have the web interface on flask. This would allow him/her to query
+the Redshift database plus the added capability of asking a question on papers of interest. I image a local user, setting up the flask app, and then exploring the database with it, then later, indexing on to his local elastic-search server, the abstract and title of paper of interests, this could mean
+filtering by a particular topic, year, or author. After the indexing, the user can ask questions of the type \emph{what do we know about the uncertainty principle?}. The answer will come on the form of a bootstrap card, with scores, possible answers, full paper URL pdf access to the document. The question and answering system is possible with \href{https://github.com/deepset-ai/haystack}{haystack}. The following are the core features of haystack on their github.
+
+
+
+
+\begin{itemize}
+\item Powerful ML models: Utilize all latest transformer based models (BERT, ALBERT, RoBERTa ...)
+\item Modular \& future-proof: Easily switch to newer models once they get published.
+\item Developer friendly: Easy to debug, extend and modify.
+\item Scalable: Production-ready deployments via Elasticsearch backend \& REST API
+\item Customizable: Fine-tune models to your own domain \& improve them continuously via user feedback
+\end{itemize}
+
+
+    
+    
+    
+    
+
+
+% ==============================================================================
+% START: Introduction
+% ==============================================================================

@@ -1,0 +1,79 @@
+
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[british,UKenglish,USenglish]{babel}
+%\usepackage[backend=bibtex]{biblatex}
+\usepackage{graphicx}
+\usepackage[inner=3cm,outer=3cm,top=3cm,bottom=3cm]{geometry}
+\usepackage{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{subcaption}
+\usepackage{url}
+\usepackage[title]{appendix}
+\usepackage[backend=bibtex,style=numeric,sorting=none]{biblatex}
+\usepackage{xcolor} %custom colours
+\usepackage{mdframed} %nice frames
+\definecolor{light-gray}{gray}{0.95}
+%\usepackage{biblatex}
+% Override hyper reference default configurations
+\hypersetup{colorlinks=true,linkcolor=blue,filecolor=magenta,urlcolor=cyan}
+\usepackage{listings}
+\urlstyle{same}
+
+\addbibresource{references.bib} % Input references by file
+\graphicspath{{images/}} % Set path for image preloading
+
+% Keywords command
+\providecommand{\keywords}[1]
+{
+  \small	
+  \textbf{\textit{Keywords---}} #1
+}
+
+
+\title{
+    \vspace{1.4cm}
+    {\large \textbf{Data Engineering Capstone Project}} \\
+    {\large \textbf{Q\&A on ArXiv Kaggle dataset}} \\
+}
+
+\vspace{1.4cm}
+\author{\textit{By Gari Ciodaro Guerra}\\[0.2cm]}
+\date{Sept 24, 2020}
+
+\vspace{1.4cm}
+
+\begin{document}
+\maketitle
+
+% Abstract
+\input{sections/abstract}
+\newpage
+
+% Introduction
+\input{sections/intro}
+
+% Contents
+\input{sections/contents}
+
+\clearpage
+\appendix
+\begin{appendices}
+\section{Code Repository}
+
+All the code implemented and utilized during the execution of the data workflow
+described in this report is available at the GitHub repository \href{https://github.com/gariciodaro/arXiv-haystack-app}{https://github.com/gariciodaro/arXiv-haystack-app}.
+
+\end{appendices}
+
+% References
+\clearpage
+\newpage
+\printbibliography
+
+\end{document}
+% ==============================================================================
+% END: Scripts
+% ==============================================================================

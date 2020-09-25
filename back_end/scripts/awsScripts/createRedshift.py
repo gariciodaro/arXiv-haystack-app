@@ -8,25 +8,29 @@ Auxliar script to cleate a redshift cluster
 import argparse
 import boto3
 import configparser
+from airflow.contrib.hooks.aws_hook import AwsHook
+from airflow.hooks.base_hook import BaseHook
 
 config = configparser.ConfigParser()
 
-# AWS credentials
+# AWS internal credentials
+aws_hook = AwsHook("aws_credentials")
+credentials = aws_hook.get_credentials()
+KEY      = credentials.access_key
+SECRET   = credentials.secret_key
+REGION   = BaseHook.get_connection("aws_credentials").extra_dejson['region']
+
+# redshift configuration.
 config.read('/home/gari/.aws/credentials')
-KEY      = config.get('credentials','KEY')
-SECRET   = config.get('credentials','SECRET')
-REGION   = config.get('credentials','REGION')
-
-
-DWH_CLUSTER_TYPE       = config.get("DWH","DWH_CLUSTER_TYPE")
-DWH_NUM_NODES          = config.get("DWH","DWH_NUM_NODES")
-DWH_NODE_TYPE          = config.get("DWH","DWH_NODE_TYPE")
-DWH_CLUSTER_IDENTIFIER = config.get("DWH","DWH_CLUSTER_IDENTIFIER")
+DWH_CLUSTER_TYPE       = 'multi-node'
+DWH_NUM_NODES          = 2
+DWH_NODE_TYPE          = 'dc2.large'
+DWH_CLUSTER_IDENTIFIER = 'dwhCluster'
 DWH_DB                 = config.get("DWH","DWH_DB")
 DWH_DB_USER            = config.get("DWH","DWH_DB_USER")
 DWH_DB_PASSWORD        = config.get("DWH","DWH_DB_PASSWORD")
-DWH_PORT               = config.get("DWH","DWH_PORT")
-DWH_IAM_ROLE_NAME      = config.get("DWH", "DWH_IAM_ROLE_NAME")
+DWH_IAM_ROLE_NAME      = 'dwhRole'
+
 
 #initilizied iam client
 # other region us-east-2

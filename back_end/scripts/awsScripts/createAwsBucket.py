@@ -6,15 +6,17 @@ Auxliar script to create bucket on AWS
 """
 
 import boto3 
-import configparser
+from airflow.contrib.hooks.aws_hook import AwsHook
+from airflow.hooks.base_hook import BaseHook
 
-config = configparser.ConfigParser()
+aws_hook = AwsHook("aws_credentials")
+credentials = aws_hook.get_credentials()
 
 # AWS credentials
-config.read('/home/gari/.aws/credentials')
-KEY      = config.get('credentials','KEY')
-SECRET   = config.get('credentials','SECRET')
-REGION   = config.get('credentials','REGION')
+KEY      = credentials.access_key
+SECRET   = credentials.secret_key
+REGION   = BaseHook.get_connection("aws_credentials").extra_dejson['region']
+
 
 def main():
     s3 = boto3.client('s3',region_name=REGION,

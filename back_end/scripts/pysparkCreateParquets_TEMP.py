@@ -17,10 +17,7 @@ from pyspark.sql.functions import monotonically_increasing_id
 import sys
 import os
 import re
-import configparser
-config = configparser.ConfigParser()
-# s3 bucked having the arxiv-metadata-oai-snapshot.json kaggle dataset.
-S3_BUCKED = config.get("APP","S3_BUCKED")
+
 
 
 REPLACE_BY_SPACE_RE = re.compile('[/(){}\[\]\|@,;]')
@@ -93,11 +90,11 @@ def spark_etl(spark,input_data_1,input_data_2,output_data):
         structured data to  S3.
     """
     #Main papers db. arXiv.
-    df = spark.read.json(input_data_1)
+    df = spark.read.json(input_data_1).dropna(subset=('id','abstract'))
     df.persist()
     #NIPS db. Enrichment of orignal arXiv db.
     df_papers_nips = spark.read.format("csv").option("delimiter", 
-                "|").option("header","True").load(input_data_2)
+            "|").option("header","True").load(input_data_2)
     # prepare columns lenght so that they are compatible with redshift.
     df_papers_nips=fix_col_var(df_papers_nips)
     #papers fact table papers
@@ -158,9 +155,9 @@ def spark_etl(spark,input_data_1,input_data_2,output_data):
 
 def main():
     spark=create_spark_session()
-    input_data_1= "s3a://{}/input_data/arxiv-metadata-oai-snapshot.json".format(S3_BUCKED)
-    input_data_2= "s3a://{}/input_data/NIPS.csv".format(S3_BUCKED)
-    output_data="s3a://{}/".format(S3_BUCKED)
+    input_data_1= "s3a://arxivs3/input_data/arxiv-metadata-oai-snapshot.json"
+    input_data_2= "s3a://arxivs3/input_data/NIPS.csv"
+    output_data="s3a://arxivs3/"
     spark_etl(spark,input_data_1,input_data_2,output_data)
 
 if __name__ == "__main__":

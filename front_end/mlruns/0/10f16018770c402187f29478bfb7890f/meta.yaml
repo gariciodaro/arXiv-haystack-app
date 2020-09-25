@@ -1,0 +1,15 @@
+artifact_uri: file:///home/gari/Desktop/final_project/front_end/mlruns/0/10f16018770c402187f29478bfb7890f/artifacts
+end_time: null
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 10f16018770c402187f29478bfb7890f
+run_uuid: 10f16018770c402187f29478bfb7890f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1601042710681
+status: 1
+tags: []
+user_id: gari

@@ -12,6 +12,9 @@ specific paper of arXiv.
 Some of the tables are enriched with papers of the [Neural Information Processing System](https://www.kaggle.com/benhamner/nips-papers). The main
 source of information is the [arXiv](https://www.kaggle.com/Cornell-University/arxiv).
 
+<img src="./img/architecture.png">
+
+
 ## Flask + Bootstrap front end.
 ### explore arXiv kaggle data set.
 <img src="./img/1_explore.png">
@@ -23,6 +26,37 @@ source of information is the [arXiv](https://www.kaggle.com/Cornell-University/a
 <img src="./img/3_make_questions.png">
 
 ## Airflow + S3 + EMR + Redshift back-end.
+<img src="./img/all_dags.png">
 <img src="./img/spark_dag.png">
 <img src="./img/load_data_to_redshift_dag.png">
+
+
+## Usage
+
+clone the repository. Execute con termial: 
+
+```
+conda create -n app python=3.6
+conda activate app
+pip install "apache-airflow[s3, postgres]"
+pip install -U Werkzeug==0.16.0
+conda install pandas 
+pip install paramiko
+pip install sshtunnel
+pip install git+https://github.com/deepset-ai/haystack.git
+conda install flask
+pip install psycopg2
+pip install boto3
+pip install pandas
+pip install wtforms
+pip install configparser
+```
+
+An elastic search cluster is needed, you can get it with docker on ./docker_elastic_search
+
+```
+docker build -t elastic .
+sudo docker run -d -p 9200:9200 -e "discovery.type=single-node" elastic
+```
+
 
