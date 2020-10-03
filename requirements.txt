@@ -4,7 +4,6 @@ paramiko
 sshtunnel
 git+https://github.com/deepset-ai/haystack.git
 flask
-psycopg2
 boto3
 pandas
 wtforms
