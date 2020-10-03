@@ -89,7 +89,7 @@ def index():
         results = cur.fetchall()
         cur.close()
         df = pd.DataFrame(results)
-        value = Markup(df.to_html(header="true", table_id="table"))
+        value = Markup(df.to_html(header="true", table_id="table", classes='table table-dark'))
         #results = cur.fetchone()
         return render_template('index.html',form=form,result=value)
 
