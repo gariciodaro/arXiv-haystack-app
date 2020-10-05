@@ -1,19 +1,10 @@
 # Created on Oct 05 2020
 # @author: gari.ciodaro.guerra
 # Docker file to create image of the
-# back end application
+# front end application
 # arXiv-haystack-app
-
-# Create image with this file:
-#     -sudo docker build -t back-end .
-#     -sudo docker run -it --network=host back-end
-# Enter bash of container
-#      -sudo docker exec -it 4fe054a1fe05 /bin/bash
-
-# pass your 
-# sudo docker cp keypairspark.pem 4fe054a1fe05:/home/ubuntu/keypairspark.pem
-
-
+# sudo docker build -t front-end --build-arg CREDENTIALS="$(cat ~/.aws/credentials)" .
+# sudo docker run -it --network=host front-end
 #Download base image ubuntu 16.04
 FROM ubuntu:16.04
 #Change shell to bash
@@ -35,6 +26,15 @@ USER ubuntu
 WORKDIR /home/ubuntu/
 RUN chmod a+rwx /home/ubuntu/
 
+# pass your aws credentials here
+COPY . /home/ubuntu/flask/
+RUN mkdir .aws
+RUN touch .aws/credentials
+ARG CREDENTIALS
+RUN echo "$CREDENTIALS" > .aws/credentials
+
+#COPY /home/ubuntu/.gari/credentials /home/ubuntu/.aws/credentials
+
 # Miniconda installing
 RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh 
 RUN bash Miniconda3-latest-Linux-x86_64.sh -b
@@ -47,27 +47,17 @@ RUN echo ". /home/ubuntu/miniconda3/etc/profile.d/conda.sh" >> ~/.profile
 # Initialize conda
 RUN conda init bash
 # Create new environment
-RUN conda create -n back_end python=3.6
+RUN conda create -n front_end python=3.6
 # Activate new python environment
-SHELL ["conda", "run", "-n", "back_end", "/bin/bash", "-c"]
+SHELL ["conda", "run", "-n", "front_end", "/bin/bash", "-c"]
 # install required packages
-RUN pip install paramiko==2.7.2
-RUN pip install sshtunnel==0.1.5
-# Install airflow with s3 and postgres support.
-RUN pip install 'apache-airflow[s3, postgres]==1.10.12'
+RUN pip install -r /home/ubuntu/flask/requirements.txt 
 
-# Copy dags and plugins from back end directory
-COPY . /home/ubuntu/airflow/
+# Change ownership of flask folder
+RUN sudo chown -R ubuntu /home/ubuntu/flask
+RUN sudo chgrp -R ubuntu /home/ubuntu/flask
+RUN python /home/ubuntu/flask/app.py
 
-# Change ownership of airflow folder
-RUN sudo chown -R ubuntu /home/ubuntu/airflow
-RUN sudo chgrp -R ubuntu /home/ubuntu/airflow
+# Expose default flask port.
+EXPOSE 5000
 
-# Initialize airflow data base
-RUN airflow initdb
-
-#Start airflow web app and scheduler
-CMD (airflow scheduler &) && airflow webserver 
-
-# Expose default airflow port.
-EXPOSE 8080

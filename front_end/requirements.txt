@@ -1,0 +1,9 @@
+Werkzeug==0.16.0
+pandas 
+farm-haystack
+flask
+boto3
+wtforms
+configparser
+flask-wtf
+matplotlib

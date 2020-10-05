@@ -20,13 +20,13 @@ from airflow.contrib.operators.sftp_operator import SFTPOperator
 from airflow.models import Variable
 #import ntpath
 
-PATH_TO_PYSPARK_SCRIPT=Variable.get("PATH_TO_PYSPARK_SCRIPT")
+#PATH_TO_PYSPARK_SCRIPT=Variable.get("PATH_TO_PYSPARK_SCRIPT")
 #PYSPARK_NAME_SCRIPT = ntpath.basename(PATH_TO_PYSPARK_SCRIPT)
 
 ssh_hook = SSHHook(ssh_conn_id="ssh_emr")
 
 args = {
-    'owner': 'Gari',
+    'owner': 'arXiv-haystack-app',
     'start_date': days_ago(2),
     'catchup': False,
     'depends_on_past':False
@@ -41,8 +41,8 @@ dag = DAG(
 copy_spark_task = SFTPOperator(
     task_id="spark_job_to_emr",
     ssh_hook=ssh_hook,
-    local_filepath=PATH_TO_PYSPARK_SCRIPT,
-    remote_filepath="/home/hadoop/pysparkCreateParquets_TEMP",
+    local_filepath='/home/ubuntu/airflow/scripts/pysparkCreateParquets_TEMP.py',
+    remote_filepath="/home/hadoop/pysparkCreateParquets_TEMP.py",
     operation="put",
     create_intermediate_dirs=True,
     dag=dag

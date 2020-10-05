@@ -16,7 +16,8 @@ from airflow.models import Variable
 
 # get role name from variables of ariflow.
 DWH_ROLE=Variable.get("AWS_ROLE_S3_DWH")
-S3_BUCKED    = Variable.get("S3_BUCKED")
+# S3_BUCKED    = Variable.get("S3_BUCKED")
+S3_BUCKED    = 'arxivs3'
 
 copy_sql = ("""
     COPY {} 
@@ -28,7 +29,7 @@ copy_sql = ("""
 list_tables=['papers','authors','abstracts','categories','versions','titles']
 
 args = {
-    'owner': 'Gari',
+    'owner': 'arXiv-haystack-app',
     'start_date': days_ago(2),
     'catchup': False,
     'depends_on_past':False

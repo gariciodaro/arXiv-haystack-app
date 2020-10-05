@@ -16,47 +16,53 @@ source of information is the [arXiv](https://www.kaggle.com/Cornell-University/a
 
 
 ## Flask + Bootstrap front end.
-### explore arXiv kaggle data set.
-<img src="./img/1_explore.png">
-
-### Use redshift to index only the abstracts that you think are relevant for a given task.
-<img src="./img/2_index_docs.png">
-
-### Ask questions!
-<img src="./img/3_make_questions.png">
 
 ## Airflow + S3 + EMR + Redshift back-end.
-<img src="./img/all_dags.png">
-<img src="./img/spark_dag.png">
-<img src="./img/load_data_to_redshift_dag.png">
 
 
-## Usage
+## Usage with docker
 
-clone the repository. Execute con termial: 
-
++ Run back-end docker container (go to back-end folder) to initialize airflow
+webserver on port 8080: 
 ```
-conda create -n app python=3.6
-conda activate app
-pip install "apache-airflow[s3, postgres]"
-pip install -U Werkzeug==0.16.0
-conda install pandas 
-pip install paramiko
-pip install sshtunnel
-pip install git+https://github.com/deepset-ai/haystack.git
-conda install flask
-pip install psycopg2
-pip install boto3
-pip install pandas
-pip install wtforms
-pip install configparser
+sudo docker build -t back-end .
+sudo docker run -it --network=host back-end
 ```
-
-An elastic search cluster is needed, you can get it with docker on ./docker_elastic_search
-
++ Run elastic search cluster container (go to docker_elastic_search folder) 
+on port 9200
 ```
 docker build -t elastic .
-sudo docker run -d -p 9200:9200 -e "discovery.type=single-node" elastic
+sudo docker run -d --network=host -e "discovery.type=single-node" elastic
+```
++ Run front-end container (got to front-ent folder) to start flask-app on port 5000. Notice
+that we pass our locar aws configuration file to the container:
+```
+sudo docker build -t front-end --build-arg CREDENTIALS="$(cat ~/.aws/credentials)" .
+sudo docker run -it --network=host front-end
+```
++ AWS configuration file should look like this:
+```
+[credentials]
+KEY=xxxxxxxxxxxxxx
+SECRET=xxxxxxxxxx
+REGION=us-west-2
+[default]
+aws_access_key_id = xxxxxxxxxxxxxxxx
+aws_secret_access_key = xxxxxxxxxxxxxxxxx
+[DWH] 
+DWH_CLUSTER_TYPE=multi-node
+DWH_NUM_NODES=2
+DWH_NODE_TYPE=dc2.large
+DWH_IAM_ROLE_NAME=xxxxxxx
+DWH_CLUSTER_IDENTIFIER=xxxxxxxx
+DWH_DB=xxxxxxxx
+DWH_DB_USER=xxxxxxxxx
+DWH_DB_PASSWORD=xxxxxxx
+DWH_PORT=5439
+DWH_HOST=xxxxxxxxx.xxxxxxxxxxxx.us-west-2.redshift.amazonaws.com
+DWH_ROLE=arn:aws:iam::xxxxxxxxxxxxx:role/xxxxxxxxx
+[APP]
+S3_BUCKED=arxivs3
 ```
 
 

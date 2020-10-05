@@ -34,8 +34,13 @@ import configparser
 config = configparser.ConfigParser()
 
 # AWS credentials
-config.read('/home/gari/.aws/credentials')
-KEY      = config.get('credentials','KEY')
+try:
+    config.read('/home/gari/.aws/credentials')
+    KEY      = config.get('credentials','KEY')
+except:
+    config.read('/home/ubuntu/.aws/credentials')
+    KEY      = config.get('credentials','KEY')
+
 SECRET   = config.get('credentials','SECRET')
 
 

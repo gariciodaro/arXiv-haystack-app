@@ -2,7 +2,7 @@
 """
 Created on Sat Sept 13 2020
 @author: gari.ciodaro.guerra
-DAG of AirFlow tables schemas for arxivs database. 
+DAG of AirFlow tables schemas for Arxiv database. 
 Run on demand.
 """
 
@@ -12,7 +12,7 @@ from airflow import DAG
 from airflow.utils.dates import days_ago
 
 args = {
-    'owner': 'Gari',
+    'owner': 'arXiv-haystack-app',
     'start_date': days_ago(2),
     'catchup': False,
     'depends_on_past':False
