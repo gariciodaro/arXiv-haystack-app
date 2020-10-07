@@ -1,7 +1,7 @@
 ### Still under dev!
 # Large scale Q and A on arXiv Kaggle dataset.
 
-This is the final project of my nanodegree on udacity called Data engineering.
+This is the final project of the nanodegree on udacity called Data engineering.
 For the back-end, Airflow is used for etl orchestration, this includes: 
 processing the original .json file of arXiv(stored on S3) on an pypspark cluster (EMR on AWS), saving the star
 data model on parquet files again in S3 and then copy those files into redshift. Redshift serves a Flask application
@@ -14,10 +14,33 @@ source of information is the [arXiv](https://www.kaggle.com/Cornell-University/a
 
 <img src="./img/architecture.png">
 
+## File structure
+```
+├── back_end
+│   ├── ...
+│   └── Dockerfile
+│   └── README.md
+├── docker_elastic_search
+│   └── Dockerfile
+├── front_end
+│   ├── ...
+│   └── Dockerfile
+│   └── README.md
+├── img
+│   └── architecture.png
+├── README.md
+└── report
+│   ├── ...
+├   ├── main.pdf
+├── report.pdf
+```
 
-## Flask + Bootstrap front end.
++ ``` report.pdf ``` is a latex report of the application, please read for 
+more context.
 
-## Airflow + S3 + EMR + Redshift back-end.
++ Please use docker to start the back-end airflow service, the flask front end, and the local elastic cluster.
++ The back_end and front_end folder have a README.md file, please read them. Notice that the back-end can run without the front end. However the front-end requires at least the ```docker_elastic_search``` container to start.
+
 
 
 ## Usage with docker

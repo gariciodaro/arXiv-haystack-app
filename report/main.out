@@ -6,5 +6,8 @@
 \BOOKMARK [1][-]{section.3}{Exploration}{}% 6
 \BOOKMARK [2][-]{subsection.3.1}{Raw Volume and Uniqueness of the datasets.}{section.3}% 7
 \BOOKMARK [2][-]{subsection.3.2}{Assessment}{section.3}% 8
-\BOOKMARK [1][-]{section.4}{Application Architecture and Workflow.}{}% 9
-\BOOKMARK [1][-]{Appendix.1.A}{Code Repository}{}% 10
+\BOOKMARK [1][-]{section.4}{The Data model}{}% 9
+\BOOKMARK [2][-]{subsection.4.1}{ETL}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.2}{ETL Orchestration with Airflow}{section.4}% 11
+\BOOKMARK [1][-]{section.5}{front-end}{}% 12
+\BOOKMARK [1][-]{Appendix.1.A}{Code Repository}{}% 13

@@ -1,3 +1,6 @@
+
+<img src="./img/logos.png">
+
 # arXiv-haystack-app Back-end
 ------------------------------------
 
