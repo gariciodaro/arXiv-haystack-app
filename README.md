@@ -86,7 +86,7 @@ Initially, I thought having a star schema would be the correct choice. It would 
 ## ETL
 Once I designed the data model and selected the hosting technology, I constructed the ETL scripts. I used PySpark to transform the json and csv into DataFrames, process them and then leave them on S3 as parquet files. *Spark*, in contrast to Redshift, supports json data manipulation, it is also parallelizable and comes with machine learning libraries. It is able to store data as parquet files, a columnar format particularity suitable for big data.
 
-Most of the transformations involved flattening the nested data from the original .json, with the occasional use of regular expressions to extract temporal features of the records. All this process can be found in 
+Most of the transformations involved flattening the nested data from the original .json, with the occasional use of regular expressions to extract temporal features of the records. All this process can be found in [pysparkCreateParquets_TEMP.py](https://github.com/gariciodaro/arXiv-haystack-app/blob/master/back_end/scripts/pysparkCreateParquets_TEMP.py).
 
 
 ## ETL Orchestration with Airflow
