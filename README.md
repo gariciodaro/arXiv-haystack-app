@@ -10,19 +10,23 @@ Using [Arxiv](https://www.kaggle.com/Cornell-University/arxiv)  and [Neural Info
 <img src="./img/architecture.png">
 
 ## :exclamation: My vision
-The project has two main parts. The back end was designed to run in the cloud. 
-This includes storage in S3 (raw files and the parquet model), EMR processing, 
-and relational database in Redshift. This would allow this back-end to serve multiple applications.
- The other part is
-the front end, on the local / client side, this means that a local user is 
-expected to have the web interface on Flask. 
-This would allow him/her to query the Redshift database plus the additional 
-ability to ask questions about documents of interest. 
+The project has two main parts. The back-end and front-end. 
+
+The back end was designed to run in the cloud (AWS) but controlled by an local airflow server, this includes:
+
++ EMR(Pyspark) processing.
++ Loading to relational database on Redshift.
+
+The front end, built on Flask, runs on the client also. Its functionality includes:
+
++ Query the Redshift database.
++ Index abstracts to a local elastic search cluster.
++ Ask questions on Indexed abstracts. 
+
 I imagine a local user, setting up the flask app and then browsing the 
-database with it, then later indexing on their local elastic search server, 
-the abstract and title of the article of interest, this could mean
+database with it, then later indexing abstracts and titles of some articles of interest, this could mean
 filtering by a particular topic, year, or author. 
-After the indexing, the user can ask questions of the type *what do we know about the uncertainty principle?*. 
+Once the selected documents were indexed, the user can ask questions of the type *what do we know about the uncertainty principle?*. 
 The answer will come on the form of a bootstrap card, with scores, possible answers, 
 full paper URL pdf access to the document. 
 The question and answering system is possible with [haystack](https://github.com/deepset-ai/haystack). The following are the core features of haystack on their github.
