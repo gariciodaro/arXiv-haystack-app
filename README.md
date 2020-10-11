@@ -1,7 +1,7 @@
 
 # :star: Explore and ask questions on ArXiv Kaggle dataset.
 
-## Abstract
+##  :point_right: Abstract
 Using [Arxiv](https://www.kaggle.com/Cornell-University/arxiv)  and [Neural Information Processing System](https://www.kaggle.com/benhamner/nips-papers) datasets I created a relational database model that allows the user to do Ad-Hoc queries for analytics. Using haystack the application allows for question and answering on user defined abstracts of the database. 
 
 **Keywords:** S3, Amazon Elastic MapReduce, Pyspark, Airflow, Redshift, Flask, NLP, Q&A, Haystack,Machine Learning, Full stack development, Data Engineering.
@@ -9,7 +9,7 @@ Using [Arxiv](https://www.kaggle.com/Cornell-University/arxiv)  and [Neural Info
 
 <img src="./img/architecture.png">
 
-## My vision
+## :exclamation: My vision
 The project has two main parts. The back end was designed to run in the cloud. 
 This includes storage in S3 (raw files and the parquet model), EMR processing, 
 and relational database in Redshift. This would allow this back-end to serve multiple applications.
@@ -36,11 +36,11 @@ The question and answering system is possible with [haystack](https://github.com
 
 
 
-# The data
+## The data
 
 I used the [Arxiv](https://www.kaggle.com/Cornell-University/arxiv)  and Neural Information Processing 
     Systems ([NIPS](https://www.kaggle.com/benhamner/nips-papers)) datasets from kaggle. I hosted both files on a S3: 
-\emph{s3a://arxivs3/input_data/arxiv-metadata-oai-snapshot.json}, \emph{s3a://arxivs3/input_data/NIPS.csv}. 
+s3a://arxivs3/input_data/arxiv-metadata-oai-snapshot.json, s3a://arxivs3/input_data/NIPS.csv. 
 
 
 ```
@@ -74,13 +74,13 @@ root
 ```
 
 
-# The data model
+## The data model
 Initially, I thought having a star schema would be the correct choice. It would offer a degree of normalization, while still providing an easy to understand data model. Nonetheless, upon trying to implement it, I realized that a query optimized model, where you have a table per query seems more appropriate, that way, in principle, you could train machine learning models per table, without having to refer to the fact table or others tables. On the other hand, I also envisioned non-technical users exploring basic trends, or asking questions about popular authors or topics in a given year. In the end, my data model resembles the star schema, allowing for ad hoc queries, while at the same time provides query optimized tables for machine learning. This hybrid approach was the main reason to select AWS Redshift cluster as the host of the model. Redshift provides Postgresql-like query language suitable for non-technical users while being Massively parallel processing (MPP) to operate on large amounts of Data. Additionally, Redshift is easily integrated with python3 with the *psycopg2* module (for front-end) and with *Airflow* through the Postgres operator.
 
 <img src="./img/star_schema.png">
 
 ## ETL
-Once I designed the data model and selected the hosting technology, I constructed the ETL scripts. I used \emph{PySpark} to transform the json and csv into DataFrames, process them and then leave them on S3 as parquet files. *Spark*, in contrast to Redshift, supports json data manipulation, it is also parallelizable and comes with machine learning libraries. It is able to store data as parquet files, a columnar format particularity suitable for big data.
+Once I designed the data model and selected the hosting technology, I constructed the ETL scripts. I used PySpark to transform the json and csv into DataFrames, process them and then leave them on S3 as parquet files. *Spark*, in contrast to Redshift, supports json data manipulation, it is also parallelizable and comes with machine learning libraries. It is able to store data as parquet files, a columnar format particularity suitable for big data.
 
 Most of the transformations involved flattening the nested data from the original .json, with the occasional use of regular expressions to extract temporal features of the records. All this process can be found in 
 
@@ -108,13 +108,13 @@ The whole development is ready to handle a 100x increase in data thanks to *PySp
 
 <img src="./img/load_data_to_redshift.png">
 
-# Front-end
+## Front-end
 I used Flask to create a web interface that queries the redshifts back-end. My original idea was to allow users to explore the database to select a subset of papers and then add the full-text paper to an elastic search cluster (key-pair document storage) for machine learning exploitation. Unfortunately the full pdfs of Arxiv are not available for *wget* download, which I found out after finishing the code (can be seen on branch pdf_fail_aws). This pipeline consisted of obtaining the URL from Redshift, downloading the pdf to the client, and then upload them to s3, where Amazon Textract could process them asynchronously to text, and eventually append them to the local elastic search server. I was forced to change it to appending the title and abstract from Redshift to Elastic.
 
 ### Url: Home
 <img src="./img/explore.png">
 
-### Url: Q & A
+### Url: Q&A
 <img src="./img/qanda.png">
 
 ## File structure
