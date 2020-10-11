@@ -221,7 +221,7 @@ def qanda_pre():
 @app.route('/qanda' , methods=['GET','POST'])
 def qanda():
     if request.method == 'POST':
-        prediction = finder.get_answers(question=request.form.get('query'), top_k_retriever=10, top_k_reader=5)
+        prediction = finder.get_answers(question=request.form.get('query'), top_k_retriever=5, top_k_reader=5)
         return render_template('qanda.html',prediction=prediction['answers'])
     else:
         return render_template('qanda.html')

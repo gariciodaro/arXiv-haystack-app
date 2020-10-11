@@ -51,13 +51,25 @@ RUN conda create -n front_end python=3.6
 # Activate new python environment
 SHELL ["conda", "run", "-n", "front_end", "/bin/bash", "-c"]
 # install required packages
-RUN pip install -r /home/ubuntu/flask/requirements.txt 
+#RUN pip install -r /home/ubuntu/flask/requirements.txt 
+
+RUN pip install Werkzeug==0.16.0
+RUN pip install pandas==1.1.3
+# version farm-haystack==0.42 ?
+RUN pip install farm-haystack
+RUN pip install flask==1.1.2
+RUN pip install boto3==1.14.58
+RUN pip install wtforms==2.3.3
+RUN pip install configparser
+RUN pip install flask-wtf==0.14.3
+RUN pip install matplotlib==3.1.1
 
 # Change ownership of flask folder
 RUN sudo chown -R ubuntu /home/ubuntu/flask
 RUN sudo chgrp -R ubuntu /home/ubuntu/flask
-RUN python /home/ubuntu/flask/app.py
+CMD python /home/ubuntu/flask/app.py 
+#RUN python /home/ubuntu/flask/app.py
 
 # Expose default flask port.
-EXPOSE 5000
+#EXPOSE 5000
 
